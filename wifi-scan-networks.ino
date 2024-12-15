@@ -24,7 +24,7 @@ void loop() {
 
   // WiFi.scanNetworks will return the number of networks found.
   int n = WiFi.scanNetworks(false, true); // first param is 'async' mode, second param is scan for 'hidden' networks
-  Serial.println("[+] Scan done");
+  Serial.println("[+] Scan end");
   if (n == 0) {
     Serial.println("[!] no networks found");
   } else {
@@ -32,18 +32,14 @@ void loop() {
     Serial.println("----------------------------------------------------------------------------------");
     Serial.println("#  | SSID                             | BSSID             | RSSI | CH | Encryption");
     for (int i = 0; i < n; ++i) {
-
-      // Convert BSSID (MAC address) to string
-      uint8_t *bssid = WiFi.BSSID(i);
-      char bssidStr[18];
-      sprintf(bssidStr, "%02X:%02X:%02X:%02X:%02X:%02X", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
-
+      
       // Print SSID and RSSI for each network found
       Serial.printf("%2d", i + 1);
       Serial.print(" | ");
       Serial.printf("%-32.32s", WiFi.SSID(i).c_str());
       Serial.print(" | ");
-      Serial.print(bssidStr);
+      // Serial.print(bssidStr);
+      Serial.print(WiFi.BSSIDstr(i));
       Serial.print(" | ");
       Serial.printf("%4ld", WiFi.RSSI(i));
       Serial.print(" | ");
