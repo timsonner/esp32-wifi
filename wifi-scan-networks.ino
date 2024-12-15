@@ -1,18 +1,13 @@
-/*
- *  This sketch demonstrates how to scan WiFi networks.
- *  The API is based on the Arduino WiFi Shield library, but has significant changes as newer WiFi functions are supported.
- *  E.g. the return value of `encryptionType()` different because more modern encryption is supported.
- */
-
- // this sketch is based on: https://github.com/espressif/arduino-esp32/blob/master/libraries/WiFi/examples/WiFiScan/WiFiScan.ino
+// this sketch is based on: https://github.com/espressif/arduino-esp32/blob/master/libraries/WiFi/examples/WiFiScan/WiFiScan.ino
 
 #include "WiFi.h"
 
 void setup() {
   Serial.begin(115200);
 
-  // Set WiFi to station mode and disconnect from an AP if it was previously connected.
+  // Set Wi-Fi to station mode 
   WiFi.mode(WIFI_STA);
+  // Disconnect Wi-Fi interface from AP
   WiFi.disconnect();
   delay(100);
   Serial.println("");
@@ -21,30 +16,32 @@ void setup() {
 
 void loop() {
   Serial.println("[+] Scan start");
-
-  // WiFi.scanNetworks will return the number of networks found.
-  int n = WiFi.scanNetworks(false, true); // first param is 'async' mode, second param is scan for 'hidden' networks
+  // REFERENCE: int16_t scanNetworks(bool async = false, bool show_hidden = false, bool passive = false, uint32_t max_ms_per_chan = 300, uint8_t channel = 0, const char * ssid=nullptr, const uint8_t * bssid=nullptr)
+  int n = WiFi.scanNetworks(false, true); // First param is 'async' mode, second param is scan for 'hidden' networks. Returns number of networks found.
   Serial.println("[+] Scan end");
   if (n == 0) {
-    Serial.println("[!] no networks found");
+    Serial.println("[!] No networks found");
   } else {
     Serial.printf("[+] %2d networks found \n", n);
-    Serial.println("----------------------------------------------------------------------------------");
-    Serial.println("#  | SSID                             | BSSID             | RSSI | CH | Encryption");
+    Serial.println("--------------------------------------------------------------------------------------");
+    Serial.println("#    | SSID                             | BSSID             | RSSI | CH   | Encryption");
     for (int i = 0; i < n; ++i) {
-      
-      // Print SSID and RSSI for each network found
-      Serial.printf("%2d", i + 1);
+      // Print network number
+      Serial.printf("%4d", i + 1);
       Serial.print(" | ");
+      // Print SSID 
       Serial.printf("%-32.32s", WiFi.SSID(i).c_str());
       Serial.print(" | ");
-      // Serial.print(bssidStr);
+      // Print BSSID
       Serial.print(WiFi.BSSIDstr(i));
       Serial.print(" | ");
-      Serial.printf("%4ld", WiFi.RSSI(i));
+      // Print RSSI
+      Serial.printf("%4d", WiFi.RSSI(i));
       Serial.print(" | ");
-      Serial.printf("%2ld", WiFi.channel(i));
+      // Print Channel
+      Serial.printf("%4d", WiFi.channel(i));
       Serial.print(" | ");
+      // Print Encryption type
       switch (WiFi.encryptionType(i)) {
         case WIFI_AUTH_OPEN:            Serial.print("open"); break;
         case WIFI_AUTH_WEP:             Serial.print("WEP"); break;
@@ -61,12 +58,12 @@ void loop() {
       delay(10);
     }
   }
-  Serial.println("----------------------------------------------------------------------------------");
+  Serial.println("--------------------------------------------------------------------------------------");
   Serial.println("");
 
-  // Delete the scan result to free memory for code below.
+  // Delete scan result to free memory
   WiFi.scanDelete();
 
-  // Wait a bit before scanning again.
+  // Wait before re-scan
   delay(5000);
 }
