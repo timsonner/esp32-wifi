@@ -1,18 +1,18 @@
-# Testing repo for m5stack cardputer (ESP32-S3)  
+# esp32-wifi
 
-
-A brief description of your project, its purpose, and what it achieves.
+Researching M5Stack ESP32-S3 devices and ESP-IDF Wi-Fi library by Espressif.
 
 ## Table of Contents
 1. [Overview](#overview)
 2. [File Descriptions](#file-descriptions)
 3. [Getting Started](#getting-started)
 4. [Usage](#usage)
+5. [Resources](#resources)
 ---
 
 ## Overview
 
-Researching ESP-32 S3 devices and ESP-IDF library by Espressif. Learning about my M5 Stack Carputer and getting betterrer at C++. Using Arduino IDE... All 2.4 GHz stuff...
+C++. Using Arduino IDE... All 2.4 GHz stuff...
 
 ---
 
@@ -68,8 +68,16 @@ https://static-cdn.m5stack.com/resource/arduino/package_m5stack_index.json
 
 ## Usage
 
-Get an ESP-32 device, flash a .ino file to it with Arduino IDE.
+Get an ESP32-S3 device like a Cardputer, flash a .ino file to it with Arduino IDE.
 
 ---
+
+## Resources
+https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/network/esp_wifi.html  
+https://github.com/espressif/arduino-esp32/tree/master/libraries/WiFi/examples  
+https://excel.fit.vutbr.cz/submissions/2021/048/48.pdf  
+
+---
+
 
 
