@@ -32,7 +32,7 @@ C++. Using Arduino IDE... All 2.4 GHz stuff...
 
 ---
 
-## Getting Started
+## Getting Started (Linux)
 
 Download Arduino IDE as zip  
 https://www.arduino.cc/en/software  
@@ -68,7 +68,7 @@ https://static-cdn.m5stack.com/resource/arduino/package_m5stack_index.json
 
 ## Usage
 
-Get an ESP32-S3 device like a Cardputer, flash a .ino file to it with Arduino IDE.
+Get an ESP32-S3 device like a M5Stack Cardputer, flash a .ino file to it with Arduino IDE. Compile and watch serial monitor go brrrrr...
 
 ---
 
