@@ -27,7 +27,11 @@ std::map<std::string, std::string> ouiMap = {
 {"C8:94:02", "Chongqing Fugui Electronics Co.,Ltd."},
 {"64:DB:A0", "Select Comfort"},
 {"5C:EA:1D", "Hon Hai Precision Ind. Co.,Ltd."},
-{"58:9B:4A", "DWnet Technologies(Suzhou) Corporation"}
+{"58:9B:4A", "DWnet Technologies(Suzhou) Corporation"},
+{"50:DC:E7", "Amazon Technologies Inc."},
+{"B4:B7:42", "Amazon Technologies Inc."},
+{"FC:84:A7", "Murata Manufacturing Co., Ltd."},
+{"3C:EF:42", "TCT mobile ltd"}
 }};
 
 // Function to get the vendor name from MAC address
