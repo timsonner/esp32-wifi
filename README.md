@@ -21,14 +21,18 @@ C++. Using Arduino IDE... All 2.4 GHz stuff...
 | **File/Folder**       | **Description**                                                                 |
 |------------------------|---------------------------------------------------------------------------------|
 | `go-convert-manuf-to-map.go`            | Converts the Wireshark manuf.txt file to a map.                                      |
+| `match-oui-from-sd.ino`   | Example of data read from SD.                                             |
 | `wifi-ap-web-server-chat.ino`            | Creates an AP, serves page at 192.168.4.1 where clients can chat.                                      |
 | `wifi-ap-web-server-dns-redirect.ino`                 | Creates an AP, serves page at zzz.com where clients can chat.                                          |
 | `wifi-ap-web-server.ino`                | Creates an AP, serves page at 192.168.4.1 basic web server.                                      |
 | `README.md`            | The README file you're currently reading.                                     |
+| `wifi-lookup-oui-from-sd.ino`   | Sniffs nearby devices and finds OUI by matching against map files in local storage (sd).                                             |
 | `wifi-scan-networks.ino`          | Scans APs, displays RSSI, BSSID, SSID, Encryption type, etc.                       |
-| `wifi-sniffer-match-oui.ino.py`   | Captures packets, matching OUI of source and destination using a hard coded map.                                             |
+| `wifi-sniff-pmkid-to-hc22000.ino`   | Sniffs PMKIDs and outputs them to hashcat 22000 format hashes for cr4xing.                                             |
+| `wifi-sniffer-match-oui.ino`   | Captures packets, matching OUI of source and destination using a hard coded map.                                             |
 | `wifi-sniffer.ino`   | Captures packets, displays first 32 bits of packet, source and destination MAC.                                             |
 | `wireshark-manuf-mapped.txt`   | Wireshark manuf.txt OUI list converted to a map.                                             |
+
 
 ---
 
@@ -68,7 +72,19 @@ https://static-cdn.m5stack.com/resource/arduino/package_m5stack_index.json
 
 ## Usage
 
-Get an ESP32-S3 device like a M5Stack Cardputer, flash a .ino file to it with Arduino IDE. Compile and watch serial monitor go brrrrr...
+Get an ESP32-S3 device like a M5Stack Cardputer, flash a .ino file to it with Arduino IDE. Compile and watch serial monitor go brrrrr...  
+
+Parse the wireshark manuf.txt file to mapped entries  
+```
+go run go-convert-manuf-to-map.go manuf.txt
+```
+
+Split the manuf txt file into bite (not byte) sized chunks  
+```
+split -l 2500 wireshark-manuf-mapped.txt manuf_part
+
+```
+Upload the chunks to the SD card of the device... The file names are hard coded into wifi-lookup-from-sd.ino, so depending on output of split command they may need to be updated.  
 
 ---
 
