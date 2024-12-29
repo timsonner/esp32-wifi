@@ -37,7 +37,7 @@ void listFiles() {
 bool loadOUIData(const char *files[], int numFiles, const uint8_t *mac, String &vendor) {
     // Iterate through each file one by one
     for (int i = 0; i < numFiles; ++i) {
-        Serial.printf("Opening file: %s\n", files[i]);
+        // Serial.printf("Opening file: %s\n", files[i]);
         File file = SD.open(files[i], FILE_READ);
         if (!file) {
             Serial.printf("Failed to open file: %s\n", files[i]);
@@ -54,20 +54,34 @@ bool loadOUIData(const char *files[], int numFiles, const uint8_t *mac, String &
             yield();  // Allow time for other tasks
             delay(1); // Add small delay for the watchdog timer
 
+            // Clean the line: remove curly braces, commas, and quotation marks
+            line.replace("{", "");
+            line.replace("}", "");
+            line.replace("\"", "");
+            line.replace("\,", "");
+
+
             int spaceIndex = line.indexOf(' ');
             if (spaceIndex > 0) {
                 String oui = line.substring(0, spaceIndex);
                 String vendorName = line.substring(spaceIndex + 1);
 
-                // Check if the OUI from the line matches the first 3 bytes of the MAC address
+                // Ensure the MAC prefix is sanitized and compare it with the OUI
                 char ouiStr[9]; // "XX:XX:XX\0"
                 snprintf(ouiStr, sizeof(ouiStr), "%02X:%02X:%02X", mac[0], mac[1], mac[2]);
 
-                if (oui == ouiStr) {
+                // Verbose logging to show the comparison details
+                // Serial.printf("Checking OUI: %s against MAC: %02X:%02X:%02X\n", oui.c_str(), mac[0], mac[1], mac[2]);
+                // Serial.printf("OUI from file: %s, Vendor: %s\n", oui.c_str(), vendorName.c_str());
+
+                // Match the OUI with the file entry
+                if (oui.equalsIgnoreCase(ouiStr)) {
                     vendor = vendorName;  // If a match is found, return the vendor
-                    
+                    // Serial.printf("Match found! MAC: %02X:%02X:%02X:%02X:%02X:%02X, Vendor: %s\n", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5], vendor.c_str());
                     file.close();  // Close the file once the match is found
                     return true;
+                } else {
+                    // Serial.printf("No match: %s != %s\n", oui.c_str(), ouiStr); // Print when no match happens
                 }
             }
         }
@@ -83,10 +97,13 @@ void promiscuousCallback(void *buf, wifi_promiscuous_pkt_type_t type) {
     wifi_promiscuous_pkt_t *packet = (wifi_promiscuous_pkt_t *)buf;
     const uint8_t *dst_mac = packet->payload + 4; // Destination MAC (4th byte for 802.11 frame)
 
+    // Print out the MAC address being processed
     char macStr[18]; // "XX:XX:XX:XX:XX:XX\0"
     snprintf(macStr, sizeof(macStr), "%02X:%02X:%02X:%02X:%02X:%02X",
              dst_mac[0], dst_mac[1], dst_mac[2],
              dst_mac[3], dst_mac[4], dst_mac[5]);
+
+    // Serial.printf("Processing MAC: %s\n", macStr);
 
     // Add MAC address to the set if not already present
     if (uniqueMacs.find(macStr) == uniqueMacs.end()) {
@@ -104,7 +121,7 @@ void promiscuousCallback(void *buf, wifi_promiscuous_pkt_type_t type) {
         // Check each file
         for (int i = 0; i < numFiles; ++i) {
             if (loadOUIData(&files[i], 1, dst_mac, vendor)) {
-                Serial.printf("MAC: %s - File: %s - Vendor: %s\n", macStr, files[i], vendor.c_str());
+                Serial.printf("[+] Match found! MAC: %s - File: %s - Vendor: %s\n", macStr, files[i], vendor.c_str());
                 matchFound = true;
                 break; // Exit loop as soon as a match is found
             } else {
@@ -113,15 +130,21 @@ void promiscuousCallback(void *buf, wifi_promiscuous_pkt_type_t type) {
             }
         }
 
-        if (!matchFound) {
-            Serial.printf("MAC: %s - Vendor: Unknown\n", macStr);
-        }
+        // if (!matchFound) {
+        //     // Handle the case where no vendor is found, e.g., for special MAC addresses
+        //     if (memcmp(dst_mac, "\xFF\xFF\xFF\xFF\xFF\xFF", 6) == 0) {
+        //         // If the MAC address is a broadcast address, handle it
+        //         Serial.printf("MAC: %s - Vendor: Broadcast Address\n", macStr);
+        //     } else {
+        //         // Handle the case where the MAC address is unknown
+        //         Serial.printf("MAC: %s - Vendor: Unknown\n", macStr);
+        //     }
+        // }
     }
 }
 
-
 void setup() {
-    Serial.begin(115200);
+    Serial.begin(921600);
     WiFi.mode(WIFI_MODE_APSTA);
     esp_wifi_set_channel(1, WIFI_SECOND_CHAN_NONE);
     esp_wifi_set_promiscuous(true);
@@ -142,6 +165,5 @@ void setup() {
 
 void loop() {
   vTaskDelay(1000 / portTICK_PERIOD_MS);  // Delay in milliseconds, allows watchdog reset
-
     delay(1000);
 }
